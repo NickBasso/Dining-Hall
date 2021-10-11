@@ -1,10 +1,6 @@
 package diningHall
 
 type DiningHall struct {
-	tables  string
-	waiters string
+	tables  []byte
+	waiters []Waiter
 }
-
-/* func (e DiningHall) LeavesRemaining() {
-    fmt.Printf("%s %s has %d leaves remaining\n", e.FirstName, e.LastName, (e.TotalLeaves - e.LeavesTaken))
-} */

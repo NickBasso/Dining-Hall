@@ -1,6 +1,10 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"dining-hall/src/food"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
 	r := gin.Default()
@@ -15,5 +19,6 @@ func main() {
 			"message": "pong",
 		})
 	})
+
 	r.Run(":4005")
 }
