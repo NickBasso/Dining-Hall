@@ -6,3 +6,4 @@ type Order struct {
 	priority byte
 	maxWait  int
 }
+
