@@ -1,24 +1,18 @@
 package main
 
 import (
-	"dining-hall/src/food"
+	"dhall/src/controllers"
+	coreService "dhall/src/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	gin.ForceConsoleColor()
+	router := gin.Default()
 
-	// default path
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, "Dining-Hall is up!")
-	})
+	coreService.InitCoreService()
+	controllers.SetupController(router)
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.Run(":4005")
+	router.Run(":4005")
 }
