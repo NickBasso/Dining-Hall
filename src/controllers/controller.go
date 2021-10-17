@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"dhall/src/components/constants"
+	"dhall/src/services"
 	coreService "dhall/src/services"
 	"net/http"
 
@@ -11,6 +13,14 @@ import (
 func placeOrder(c *gin.Context) {
 	c.SetCookie("id", uuid.New().String(), 10, "http://localhost:4006/order", "http://localhost:4006/order", false, true)
 	c.Redirect(http.StatusFound, "http://localhost:4006/order")
+}
+
+func distributeOrder(c *gin.Context) {
+	
+}
+
+func test(c *gin.Context) {
+	services.GenerateOrders(constants.GeneratedOrdersCount)
 }
 
 func getOrderList(c *gin.Context) {
@@ -35,4 +45,6 @@ func SetupController(router *gin.Engine) {
 	})
 
 	router.POST("/order", placeOrder)
+	router.GET("/test", test)
+	router.POST("/distribution", distributeOrder)
 }

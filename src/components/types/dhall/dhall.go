@@ -10,6 +10,7 @@ import (
 type DiningHall struct {
 	Tables  []table.Table
 	Waiters []waiter.Waiter
-	Menu []food.Food
-	OrderMap map[int16]order.Order
+	MenuArray []food.Food
+	MenuMap map[int]food.Food
+	OrderMap map[int]order.Order
 }
