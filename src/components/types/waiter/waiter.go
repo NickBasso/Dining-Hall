@@ -1,6 +1,6 @@
 package waiter
 
 type Waiter struct {
-	Id   byte
+	ID   int
 	Name string
 }

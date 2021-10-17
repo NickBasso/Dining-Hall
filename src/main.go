@@ -1,8 +1,9 @@
 package main
 
 import (
+	"dhall/src/configs"
 	"dhall/src/controllers"
-	coreService "dhall/src/services"
+	"dhall/src/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,8 +12,10 @@ func main() {
 	gin.ForceConsoleColor()
 	router := gin.Default()
 
-	coreService.InitCoreService()
+	configs.SetupENV()
+	services.InitCoreService()
 	controllers.SetupController(router)
+	// services.GenerateOrders(constants.GeneratedOrdersCount)
 
 	router.Run(":4005")
 }
