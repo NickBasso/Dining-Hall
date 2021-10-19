@@ -1,10 +1,10 @@
 package dhall
 
 import (
-	"dhall/src/components/types/food"
-	"dhall/src/components/types/order"
-	"dhall/src/components/types/table"
-	"dhall/src/components/types/waiter"
+	"dininghall/src/components/types/food"
+	"dininghall/src/components/types/order"
+	"dininghall/src/components/types/table"
+	"dininghall/src/components/types/waiter"
 )
 
 type DiningHall struct {

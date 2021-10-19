@@ -1,4 +1,4 @@
-module dhall
+module dininghall
 
 go 1.17
 

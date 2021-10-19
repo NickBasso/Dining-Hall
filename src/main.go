@@ -1,9 +1,9 @@
 package main
 
 import (
-	"dhall/src/configs"
-	"dhall/src/controllers"
-	"dhall/src/services"
+	"dininghall/src/configs"
+	"dininghall/src/controllers"
+	"dininghall/src/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +15,6 @@ func main() {
 	configs.SetupENV()
 	services.InitCoreService()
 	controllers.SetupController(router)
-	// services.GenerateOrders(constants.GeneratedOrdersCount)
 
 	router.Run(":4005")
 }

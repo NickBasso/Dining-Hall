@@ -1,12 +1,13 @@
 package constants
 
 const (
-	TablesCount          = 6
-	WaitersCount         = 3
-	MenuCount            = 10
-	ItemsCap             = 4
-	PriorityCap          = 5
-	GeneratedOrdersCount = 4
+	TablesCount           = 6
+	WaitersCount          = 3
+	MenuCount             = 10
+	ItemsCap              = 4
+	PriorityCap           = 5
+	GeneratedOrdersCount  = 4
+	WaiterPickUpOrderTime = 3
 )
 
 var Names = [...]string{

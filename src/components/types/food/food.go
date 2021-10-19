@@ -1,8 +1,8 @@
 package food
 
 import (
-	"dhall/src/components/constants"
-	"dhall/src/components/types/apparatus"
+	"dininghall/src/components/constants"
+	"dininghall/src/components/types/apparatus"
 )
 
 type Food struct {
