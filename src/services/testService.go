@@ -2,7 +2,7 @@ package services
 
 import (
 	"bytes"
-	"dhall/src/components/constants"
+	"dininghall/src/components/constants"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -42,42 +42,34 @@ func GenerateOrders(amount int) []Order {
 		fmt.Printf("Order %d: %v\n", i + 1, orders[i])
 	}
 
-	/*
+	for i := 0; i < constants.ItemsCap; i++ {
+		reqBody, reqBodySerializationErr := json.Marshal(orders[i])
+		if reqBodySerializationErr != nil {
+			log.Fatalln(reqBodySerializationErr)
+		}
 
-				"order_id": 1,
-		"table_id": 1,
-		"waiter_id": 1,
-		"items": [ 3, 4, 4, 2 ],
-		"priority": 3,
-		"max_wait": 45,
-		"pick_up_time": 1631453140 // UNIX timestamp
+		fmt.Printf("%v\n", orders[i])
 
-	*/
+		resp, POSTErr := http.Post(os.Getenv("KITCHEN_URL")+"/order", "application/json", bytes.NewBuffer(reqBody))
+		if POSTErr != nil {
+			log.Fatalln(POSTErr)
+		}
 
-	reqBody, err := json.Marshal(orders)
-	if err != nil {
-		log.Fatalln(err)
+		defer resp.Body.Close()
+
+		body, readPOSTResErr := ioutil.ReadAll(resp.Body)
+		if readPOSTResErr != nil {
+			log.Fatalln(readPOSTResErr)
+		}
+
+		var POSTOrderRes string;
+		POSTResDeserializationErr := json.Unmarshal(body, &POSTOrderRes)
+		if(POSTResDeserializationErr != nil) {
+			log.Fatalln(POSTResDeserializationErr)
+		}
+
+		fmt.Printf("POST order: %s => %v\n", orders[i].OrderID, POSTOrderRes)
 	}
-
-	fmt.Printf("%v", orders)
-
-	for i := 0; i < int(len(reqBody)); i++ {
-		println(i , ": ", reqBody[i])
-	}
-
-	resp, err := http.Post(os.Getenv("KITCHEN_URL")+"/order", "application/json", bytes.NewBuffer(reqBody))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	log.Println(string(body))
 
 	return orders
 }

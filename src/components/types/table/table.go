@@ -1,6 +1,6 @@
 package table
 
-import "dhall/src/components/types/order"
+import "dininghall/src/components/types/order"
 
 type Table struct {
 	IsFree     bool

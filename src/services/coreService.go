@@ -1,13 +1,13 @@
 package services
 
 import (
-	"dhall/src/components/constants"
-	"dhall/src/components/types/apparatus"
-	"dhall/src/components/types/dhall"
-	"dhall/src/components/types/food"
-	"dhall/src/components/types/order"
-	"dhall/src/components/types/table"
-	"dhall/src/components/types/waiter"
+	"dininghall/src/components/constants"
+	"dininghall/src/components/types/apparatus"
+	"dininghall/src/components/types/dhall"
+	"dininghall/src/components/types/food"
+	"dininghall/src/components/types/order"
+	"dininghall/src/components/types/table"
+	"dininghall/src/components/types/waiter"
 )
 
 type Dhall = dhall.DiningHall

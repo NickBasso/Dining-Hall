@@ -1,18 +1,41 @@
 package controllers
 
 import (
-	"dhall/src/components/constants"
-	"dhall/src/services"
-	coreService "dhall/src/services"
-	"net/http"
+	"dininghall/src/components/constants"
+	"dininghall/src/components/types/order"
+	"dininghall/src/services"
+	coreService "dininghall/src/services"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-func placeOrder(c *gin.Context) {
+type Delivery order.Delivery
+
+/* func placeOrder(c *gin.Context) {
 	c.SetCookie("id", uuid.New().String(), 10, "http://localhost:4006/order", "http://localhost:4006/order", false, true)
 	c.Redirect(http.StatusFound, "http://localhost:4006/order")
+} */
+
+func distributeOrder(c *gin.Context) {
+	var delivery Delivery;
+	jsonDataRaw, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {}
+	e := json.Unmarshal(jsonDataRaw, &delivery)
+
+	if e != nil {}
+
+
+	fmt.Printf("POST delivery %s received, distributing...\n", delivery.OrderID)
+	c.JSON(200, "Delivery received, distributing...");
+
+	
+}
+
+func test(c *gin.Context) {
+	services.GenerateOrders(constants.GeneratedOrdersCount)
 }
 
 func distributeOrder(c *gin.Context) {
@@ -44,7 +67,6 @@ func SetupController(router *gin.Engine) {
 		c.JSON(200, "Dining hall server is up!")
 	})
 
-	router.POST("/order", placeOrder)
 	router.GET("/test", test)
 	router.POST("/distribution", distributeOrder)
 }
