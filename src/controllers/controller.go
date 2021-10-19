@@ -38,6 +38,14 @@ func test(c *gin.Context) {
 	services.GenerateOrders(constants.GeneratedOrdersCount)
 }
 
+func distributeOrder(c *gin.Context) {
+	
+}
+
+func test(c *gin.Context) {
+	services.GenerateOrders(constants.GeneratedOrdersCount)
+}
+
 func getOrderList(c *gin.Context) {
 	id := c.Query("id")
 	items := c.Query("items")
@@ -59,7 +67,6 @@ func SetupController(router *gin.Engine) {
 		c.JSON(200, "Dining hall server is up!")
 	})
 
-	// router.POST("/order", placeOrder)
 	router.GET("/test", test)
 	router.POST("/distribution", distributeOrder)
 }
