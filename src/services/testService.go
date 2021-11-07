@@ -42,7 +42,7 @@ func GenerateOrders(amount int) []Order {
 		fmt.Printf("Order %d: %v\n", i + 1, orders[i])
 	}
 
-	for i := 0; i < constants.ItemsCap; i++ {
+	for i := 0; i < constants.GeneratedOrdersCount; i++ {
 		reqBody, reqBodySerializationErr := json.Marshal(orders[i])
 		if reqBodySerializationErr != nil {
 			log.Fatalln(reqBodySerializationErr)

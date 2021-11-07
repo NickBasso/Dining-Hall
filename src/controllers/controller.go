@@ -27,11 +27,10 @@ func distributeOrder(c *gin.Context) {
 
 	if e != nil {}
 
-
-	fmt.Printf("POST delivery %s received, distributing...\n", delivery.OrderID)
-	c.JSON(200, "Delivery received, distributing...");
-
+	fmt.Printf("Delivery details:\n\t%v\n", delivery)
 	
+	fmt.Printf("POST delivery %s received, distributing...\n", delivery.OrderID)
+	c.JSON(200, "DHall: Delivery received, distributing...");
 }
 
 func test(c *gin.Context) {
