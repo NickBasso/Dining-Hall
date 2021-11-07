@@ -15,6 +15,7 @@ func main() {
 	configs.SetupENV()
 	services.InitCoreService()
 	controllers.SetupController(router)
+	// services.GenerateOrders(constants.GeneratedOrdersCount)
 
 	router.Run(":4005")
 }
