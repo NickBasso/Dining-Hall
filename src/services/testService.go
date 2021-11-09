@@ -66,7 +66,6 @@ func GenerateOrders(amount int) []Order {
 		}
 
 		fmt.Printf("%v\n", orders[i])
-
 		resp, POSTErr := http.Post(os.Getenv("KITCHEN_URL")+"/order", "application/json", bytes.NewBuffer(reqBody))
 		if POSTErr != nil {
 			log.Fatalln(POSTErr)
