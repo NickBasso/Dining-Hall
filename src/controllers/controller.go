@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,25 +21,19 @@ type Delivery order.Delivery
 } */
 
 func distributeOrder(c *gin.Context) {
+	c.JSON(200, "DHall: Delivery received, distributing...");
+
 	var delivery Delivery;
 	jsonDataRaw, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {}
 	e := json.Unmarshal(jsonDataRaw, &delivery)
-
 	if e != nil {}
-
-	fmt.Printf("Delivery details:\n\t%v\n", delivery)
-	
 	fmt.Printf("POST delivery %s received, distributing...\n", delivery.OrderID)
-	c.JSON(200, "DHall: Delivery received, distributing...");
-}
+	fmt.Printf("Delivery details:\n\t%v\n", delivery)
+	fmt.Printf("Time delivered:\n\t%v\n", time.Now().UnixMilli())
+	fmt.Printf("Time ordered:\n\t%v\n", delivery.PickUpTime)
 
-func test(c *gin.Context) {
-	services.GenerateOrders(constants.GeneratedOrdersCount)
-}
-
-func distributeOrder(c *gin.Context) {
-	
+	fmt.Printf("Rating: %d stars\n\n", services.EvaluateDeliveryTimes(delivery.PickUpTime, time.Now().UnixMilli(), int64(delivery.MaxWait)))
 }
 
 func test(c *gin.Context) {

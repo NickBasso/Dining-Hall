@@ -6,7 +6,7 @@ const (
 	MenuCount             = 10
 	ItemsCap              = 4
 	PriorityCap           = 5
-	GeneratedOrdersCount  = 2
+	GeneratedOrdersCount  = 88
 	WaiterPickUpOrderTime = 3
 )
 
