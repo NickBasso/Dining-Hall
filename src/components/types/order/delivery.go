@@ -10,6 +10,6 @@ type Delivery struct {
 	Priority       int
 	MaxWait        int
 	PickUpTime     int64
-	CookingTime    int
+	CookingTime    int64
 	CookingDetails []props.CookingDetail
 }
