@@ -94,7 +94,6 @@ func GenerateOrder (idx int) {
 
 	fmt.Printf("POST order: %s => %v\n\n", order.OrderID, POSTOrderRes)	
 }
-
 func GenerateOrders(amount int) /* []Order */ {
 	orders := make([]Order, amount)
 
