@@ -23,21 +23,31 @@ type Delivery order.Delivery
 func distributeOrder(c *gin.Context) {
 	c.JSON(200, "DHall: Delivery received, distributing...");
 
+	time.Sleep(constants.WaiterPickUpOrderTime * time.Second)
 	var delivery Delivery;
 	jsonDataRaw, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {}
 	e := json.Unmarshal(jsonDataRaw, &delivery)
 	if e != nil {}
+	deliveryTime := time.Now().UnixMilli()
 	fmt.Printf("POST delivery %s received, distributing...\n", delivery.OrderID)
 	fmt.Printf("Delivery details:\n\t%v\n", delivery)
 	fmt.Printf("Time delivered:\n\t%v\n", time.Now().UnixMilli())
 	fmt.Printf("Time ordered:\n\t%v\n", delivery.PickUpTime)
 
-	fmt.Printf("Rating: %d stars\n\n", services.EvaluateDeliveryTimes(delivery.PickUpTime, time.Now().UnixMilli(), int64(delivery.MaxWait)))
+	fmt.Printf("Rating: %d stars\n\n", services.EvaluateDeliveryTimes(delivery.PickUpTime, deliveryTime, int64(delivery.MaxWait)))
+	coreService.FinishOrder(delivery.WaiterID)
+	println("DONE > ==========================================================")
 }
 
 func test(c *gin.Context) {
 	services.GenerateOrders(constants.GeneratedOrdersCount)
+}
+
+func simulateOrdersConsecutively(c *gin.Context) {
+	for i := 0; i < constants.GeneratedOrdersCount; i++ {
+		go services.GenerateOrder(i)
+	}
 }
 
 func getOrderList(c *gin.Context) {
@@ -57,9 +67,7 @@ func getOrderList(c *gin.Context) {
 func SetupController(router *gin.Engine) {
   coreService.InitCoreService()
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, "Dining hall server is up!")
-	})
+	router.GET("/", simulateOrdersConsecutively)
 
 	router.GET("/test", test)
 	router.POST("/distribution", distributeOrder)

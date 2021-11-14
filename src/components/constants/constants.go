@@ -1,12 +1,12 @@
 package constants
 
 const (
-	TablesCount           = 6
-	WaitersCount          = 3
+	TablesCount           = 10
+	WaitersCount          = 4
 	MenuCount             = 10
-	ItemsCap              = 4
+	ItemsCap              = 10
 	PriorityCap           = 5
-	GeneratedOrdersCount  = 88
+	GeneratedOrdersCount  = 3
 	WaiterPickUpOrderTime = 3
 )
 
