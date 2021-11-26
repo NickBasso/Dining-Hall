@@ -20,6 +20,9 @@ type Delivery order.Delivery
 	c.Redirect(http.StatusFound, "http://localhost:4006/order")
 } */
 
+var averageRating = 0
+var ordersCount = 0
+
 func distributeOrder(c *gin.Context) {
 	c.JSON(200, "DHall: Delivery received, distributing...");
 
@@ -35,19 +38,26 @@ func distributeOrder(c *gin.Context) {
 	fmt.Printf("Time delivered:\n\t%v\n", time.Now().UnixMilli())
 	fmt.Printf("Time ordered:\n\t%v\n", delivery.PickUpTime)
 
-	fmt.Printf("Rating: %d stars\n\n", services.EvaluateDeliveryTimes(delivery.PickUpTime, deliveryTime, int64(delivery.MaxWait)))
+	currentOrderRating := services.EvaluateDeliveryTimes(delivery.PickUpTime, deliveryTime, int64(delivery.MaxWait))
+	averageRating += currentOrderRating
+	ordersCount++
+
+	fmt.Printf("Rating: %d stars\n\n", currentOrderRating)
 	coreService.FinishOrder(delivery.WaiterID)
 	println("DONE > ==========================================================")
 }
 
-func test(c *gin.Context) {
+/* func test(c *gin.Context) {
 	services.GenerateOrders(constants.GeneratedOrdersCount)
-}
+} */
 
 func simulateOrdersConsecutively(c *gin.Context) {
+	// TODO: awaiting => waitGroup
 	for i := 0; i < constants.GeneratedOrdersCount; i++ {
 		go services.GenerateOrder(i)
 	}
+
+	// println("Average rating for all orders: ", averageRating / ordersCount)
 }
 
 func getOrderList(c *gin.Context) {
@@ -69,6 +79,6 @@ func SetupController(router *gin.Engine) {
 
 	router.GET("/", simulateOrdersConsecutively)
 
-	router.GET("/test", test)
+	// router.GET("/test", test)
 	router.POST("/distribution", distributeOrder)
 }

@@ -6,6 +6,6 @@ type Order struct {
 	WaiterID   int
 	Items      []int
 	Priority   int
-	MaxWait    int
+	MaxWait    float64
 	PickUpTime int64
 }

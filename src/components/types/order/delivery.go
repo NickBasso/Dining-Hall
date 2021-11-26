@@ -8,7 +8,7 @@ type Delivery struct {
 	WaiterID       int
 	Items          []int
 	Priority       int
-	MaxWait        int
+	MaxWait        float64
 	PickUpTime     int64
 	CookingTime    int64
 	CookingDetails []props.CookingDetail
