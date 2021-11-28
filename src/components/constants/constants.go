@@ -6,8 +6,8 @@ const (
 	MenuCount             = 10
 	ItemsCap              = 10
 	PriorityCap           = 5
-	GeneratedOrdersCount  = 3
-	WaiterPickUpOrderTime = 3
+	GeneratedOrdersCount  = 10
+	WaiterPickUpOrderTime = 1
 )
 
 var Names = [...]string{

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +21,13 @@ type Delivery order.Delivery
 	c.Redirect(http.StatusFound, "http://localhost:4006/order")
 } */
 
-var averageRating = 0
+var wg sync.WaitGroup
+
+var ratingPoints = 0
 var ordersCount = 0
 
 func distributeOrder(c *gin.Context) {
+	defer wg.Done()
 	c.JSON(200, "DHall: Delivery received, distributing...");
 
 	time.Sleep(constants.WaiterPickUpOrderTime * time.Second)
@@ -39,7 +43,7 @@ func distributeOrder(c *gin.Context) {
 	fmt.Printf("Time ordered:\n\t%v\n", delivery.PickUpTime)
 
 	currentOrderRating := services.EvaluateDeliveryTimes(delivery.PickUpTime, deliveryTime, int64(delivery.MaxWait))
-	averageRating += currentOrderRating
+	ratingPoints += currentOrderRating
 	ordersCount++
 
 	fmt.Printf("Rating: %d stars\n\n", currentOrderRating)
@@ -53,11 +57,16 @@ func distributeOrder(c *gin.Context) {
 
 func simulateOrdersConsecutively(c *gin.Context) {
 	// TODO: awaiting => waitGroup
+
 	for i := 0; i < constants.GeneratedOrdersCount; i++ {
+		wg.Add(1)
 		go services.GenerateOrder(i)
 	}
 
-	// println("Average rating for all orders: ", averageRating / ordersCount)
+	fmt.Println("Main: Waiting for workers to finish")
+	wg.Wait()
+	fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
+	fmt.Printf("Average rating for all orders: \n\n\n", ratingPoints / ordersCount)
 }
 
 func getOrderList(c *gin.Context) {
