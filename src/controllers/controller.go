@@ -66,7 +66,7 @@ func simulateOrdersConsecutively(c *gin.Context) {
 	fmt.Println("Main: Waiting for workers to finish")
 	wg.Wait()
 	fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
-	fmt.Printf("Average rating for all orders: \n\n\n", ratingPoints / ordersCount)
+	fmt.Printf("Average rating for all orders: %g \n\n\n", float32(ratingPoints) / float32(ordersCount))
 }
 
 func getOrderList(c *gin.Context) {
