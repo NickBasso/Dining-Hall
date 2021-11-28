@@ -4,10 +4,10 @@ const (
 	TablesCount           = 10
 	WaitersCount          = 4
 	MenuCount             = 10
-	ItemsCap              = 10
+	ItemsCap              = 100
 	PriorityCap           = 5
-	GeneratedOrdersCount  = 3
-	WaiterPickUpOrderTime = 1
+	GeneratedOrdersCount  = 10
+	WaiterPickUpOrderTime = 0
 )
 
 var Names = [...]string{
