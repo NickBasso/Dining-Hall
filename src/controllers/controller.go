@@ -4,7 +4,6 @@ import (
 	"dininghall/src/components/constants"
 	"dininghall/src/components/types/order"
 	"dininghall/src/services"
-	coreService "dininghall/src/services"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -46,9 +45,11 @@ func distributeOrder(c *gin.Context) {
 	ratingPoints += currentOrderRating
 	ordersCount++
 
-	fmt.Printf("Rating: %d stars\n\n", currentOrderRating)
-	coreService.FinishOrder(delivery.WaiterID)
+	services.FinishOrder(delivery.WaiterID, delivery.TableID)
 	println("DONE > ==========================================================")
+	fmt.Printf("Rating: %d stars\n\n", currentOrderRating)
+	fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
+	fmt.Printf("Average rating for all orders: %g \n\n\n", float32(ratingPoints) / float32(ordersCount))
 }
 
 /* func test(c *gin.Context) {
@@ -58,33 +59,35 @@ func distributeOrder(c *gin.Context) {
 func simulateOrdersConsecutively(c *gin.Context) {
 	// TODO: awaiting => waitGroup
 
-	for i := 0; i < constants.GeneratedOrdersCount; i++ {
-		wg.Add(1)
-		go services.GenerateOrder(i)
-	}
+	// generate orders infinitely
+	// for i := 0; true; i++ {
+	// 	wg.Add(1)
+	// 	go services.GenerateOrder(i)
+	// }
+	go services.SimulateOrdersConsecutively(&wg);
 
-	fmt.Println("Main: Waiting for workers to finish")
-	wg.Wait()
-	fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
-	fmt.Printf("Average rating for all orders: %g \n\n\n", float32(ratingPoints) / float32(ordersCount))
+	// fmt.Println("Main: Waiting for workers to finish")
+	// wg.Wait()
+	// fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
+	// fmt.Printf("Average rating for all orders: %g \n\n\n", float32(ratingPoints) / float32(ordersCount))
 }
 
-func getOrderList(c *gin.Context) {
-	id := c.Query("id")
-	items := c.Query("items")
-	priority := c.Query("priority")
-	maxWait := c.Query("maxWait")
+// func getOrderList(c *gin.Context) {
+// 	id := c.Query("id")
+// 	items := c.Query("items")
+// 	priority := c.Query("priority")
+// 	maxWait := c.Query("maxWait")
 
-	c.JSON(200, gin.H{
-		"id":       id,
-		"items":    items,
-		"priority": priority,
-		"maxWait":  maxWait,
-	})
-}
+// 	c.JSON(200, gin.H{
+// 		"id":       id,
+// 		"items":    items,
+// 		"priority": priority,
+// 		"maxWait":  maxWait,
+// 	})
+// }
 
 func SetupController(router *gin.Engine) {
-  coreService.InitCoreService()
+  services.InitCoreService()
 
 	router.GET("/", simulateOrdersConsecutively)
 

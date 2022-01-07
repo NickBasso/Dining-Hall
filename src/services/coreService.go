@@ -8,6 +8,7 @@ import (
 	"dininghall/src/components/types/order"
 	"dininghall/src/components/types/table"
 	"dininghall/src/components/types/waiter"
+	"sync"
 )
 
 type Dhall = dhall.DiningHall
@@ -18,6 +19,13 @@ type Table = table.Table
 type Waiter = waiter.Waiter
 
 var dhallRef *Dhall = nil
+
+func SimulateOrdersConsecutively(wg *sync.WaitGroup) {
+	for i := 0; true; i++ {
+		wg.Add(1)
+		go GenerateOrder(i)
+	}
+}
 
 func InitCoreService() {
 	dhallRef = new(Dhall)
@@ -45,10 +53,10 @@ func fillOrderMap () {
 	}
 }
 
-func getMenuArray() []Food {
-	return dhallRef.MenuArray
-}
+// func getMenuArray() []Food {
+// 	return dhallRef.MenuArray
+// }
 
-func getOrderMap() map[int]Order {
-	return dhallRef.OrderMap
-}
+// func getOrderMap() map[int]Order {
+// 	return dhallRef.OrderMap
+// }

@@ -15,6 +15,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// var ratingPoints = 0
+// var ordersCount = 0
+
 func EvaluateDeliveryTimes(from int64, to int64, maxWait int64) int{
 	
 	timeElapsed := (to - from) / 1000;
@@ -35,7 +38,22 @@ func EvaluateDeliveryTimes(from int64, to int64, maxWait int64) int{
 }
 
 func GenerateOrder (idx int) {
+	isFreeTableAvailable := false
+	isFreeWaiterAvailable := false
+
+
+	for !isFreeTableAvailable {
+		for i := 0; i < len(dhallRef.Tables); i++ {
+			if(dhallRef.Tables[i].IsFree) {
+				dhallRef.Tables[i].IsFree = true
+				isFreeTableAvailable = true
+				break
+			}
+		}
+	}
+
 	itemsCount := rand.Intn(constants.ItemsCap) + 1
+	// anti-null value mechanism
 	maxWait := 0
 	maxFloat := 0.0
 
@@ -55,11 +73,9 @@ func GenerateOrder (idx int) {
 	tableID := idx
 	waiterID := 0
 
-	isFreeWaiterAvailable := false
-
 	for !isFreeWaiterAvailable {
 		for i := 0; i < len(dhallRef.Waiters); i++ {
-			if(dhallRef.Waiters[i].IsBusy == false) {
+			if(!dhallRef.Waiters[i].IsBusy) {
 				dhallRef.Waiters[i].IsBusy = true
 				isFreeWaiterAvailable = true
 				break
@@ -67,7 +83,8 @@ func GenerateOrder (idx int) {
 		}	
 	}
 
-	order := Order{Items: items, MaxWait: maxFloat, OrderID: orderID, PickUpTime: pickUpTime, Priority: priority, TableID: tableID, WaiterID: waiterID}
+	order := Order{Items: items, MaxWait: maxFloat, OrderID: orderID, PickUpTime: pickUpTime,
+		 Priority: priority, TableID: tableID, WaiterID: waiterID}
 
 	fmt.Printf("Order %s: %v\n", orderID, order)
 
@@ -96,9 +113,13 @@ func GenerateOrder (idx int) {
 		log.Fatalln(POSTResDeserializationErr)
 	}
 
-	fmt.Printf("POST order: %s => %v\n\n", order.OrderID, POSTOrderRes)	
+	// fmt.Printf("POST order: %s => %v\n\n", order.OrderID, POSTOrderRes)	
+	// fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
+	// fmt.Printf("Average rating for all orders: %g \n\n\n", float32(ratingPoints) / float32(ordersCount))
 }
 
-func FinishOrder(waiterID int) {
+func FinishOrder(waiterID int, tableID int) {
 	dhallRef.Waiters[waiterID].IsBusy = false;
+	dhallRef.Tables[tableID].IsFree = true;
+	dhallRef.Tables[tableID].HasOrdered = false;
 }
