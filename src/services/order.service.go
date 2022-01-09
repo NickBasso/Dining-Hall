@@ -3,6 +3,12 @@ package services
 import (
 	"bytes"
 	"dininghall/src/components/constants"
+	"dininghall/src/components/types/apparatus"
+	"dininghall/src/components/types/dhall"
+	"dininghall/src/components/types/food"
+	"dininghall/src/components/types/order"
+	"dininghall/src/components/types/table"
+	"dininghall/src/components/types/waiter"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,50 +16,44 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-// var ratingPoints = 0
-// var ordersCount = 0
+type Dhall = dhall.DiningHall
+type Apparatus = apparatus.Apparatus
+type Food = food.Food
+type Order = order.Order
+type Table = table.Table
+type Waiter = waiter.Waiter
 
-func EvaluateDeliveryTimes(from int64, to int64, maxWait int64) int{
-	
-	timeElapsed := (to - from) / 1000;
-	fmt.Printf("from: %d  -  to: %d  -  maxWait: %g  -  timeElapsed: %g\n", from, to, float32(maxWait), float32(timeElapsed))
-	if maxWait > timeElapsed {
-		return 5
-	} else if float32(maxWait) * 1.1 > float32(timeElapsed) {
-		return 4
-	} else if float32(maxWait) * 1.2 > float32(timeElapsed) {
-		return 3
-	} else if float32(maxWait) * 1.3 > float32(timeElapsed) {
-		return 2
-	} else if float32(maxWait)* 1.4 > float32(timeElapsed)  {
-		return 1
-	} else {
-		return 0
-	}
-}
+var dhallRef *Dhall = nil
+var pendingOrdersCounter = 0
 
-func GenerateOrder (idx int) {
+func GenerateOrder(idx int) {
 	isFreeTableAvailable := false
 	isFreeWaiterAvailable := false
 
-
 	for !isFreeTableAvailable {
 		for i := 0; i < len(dhallRef.Tables); i++ {
+			dhallRef.Tables[i].Mutex.Lock()
+
 			if(dhallRef.Tables[i].IsFree) {
 				dhallRef.Tables[i].IsFree = true
 				isFreeTableAvailable = true
+				dhallRef.Tables[i].Mutex.Unlock()
 				break
 			}
+
+			dhallRef.Tables[i].Mutex.Unlock()
 		}
+
+		time.Sleep(50 * time.Millisecond)
 	}
 
 	itemsCount := rand.Intn(constants.ItemsCap) + 1
-	// anti-null value mechanism
 	maxWait := 0
 	maxFloat := 0.0
 
@@ -70,21 +70,28 @@ func GenerateOrder (idx int) {
 	orderID := uuid.NewString()
 	pickUpTime := time.Now().UnixMilli()
 	priority := rand.Intn(constants.PriorityCap) + 1
-	tableID := idx
+	tableID := rand.Intn(constants.TablesCount)
 	waiterID := 0
 
 	for !isFreeWaiterAvailable {
 		for i := 0; i < len(dhallRef.Waiters); i++ {
+			dhallRef.Waiters[i].Mutex.Lock()
+
 			if(!dhallRef.Waiters[i].IsBusy) {
 				dhallRef.Waiters[i].IsBusy = true
 				isFreeWaiterAvailable = true
+			  dhallRef.Waiters[i].Mutex.Unlock()
 				break
 			}
+
+			dhallRef.Waiters[i].Mutex.Unlock()
 		}	
+
+		time.Sleep(50 * time.Millisecond)
 	}
 
-	order := Order{Items: items, MaxWait: maxFloat, OrderID: orderID, PickUpTime: pickUpTime,
-		 Priority: priority, TableID: tableID, WaiterID: waiterID}
+	order := Order {Items: items, MaxWait: maxFloat, OrderID: orderID, PickUpTime: pickUpTime,
+		Priority: priority, TableID: tableID, WaiterID: waiterID}
 
 	fmt.Printf("Order %s: %v\n", orderID, order)
 
@@ -112,14 +119,19 @@ func GenerateOrder (idx int) {
 	if(POSTResDeserializationErr != nil) {
 		log.Fatalln(POSTResDeserializationErr)
 	}
-
-	// fmt.Printf("POST order: %s => %v\n\n", order.OrderID, POSTOrderRes)	
-	// fmt.Printf("Rating points: %d\nOrdersCount: %d\n", ratingPoints, ordersCount)
-	// fmt.Printf("Average rating for all orders: %g \n\n\n", float32(ratingPoints) / float32(ordersCount))
 }
 
-func FinishOrder(waiterID int, tableID int) {
+func FinishOrder(waiterID int, tableID int, waitGroup *sync.WaitGroup) {
+	dhallRef.Waiters[waiterID].Mutex.Lock()
+	defer dhallRef.Waiters[waiterID].Mutex.Unlock()
 	dhallRef.Waiters[waiterID].IsBusy = false;
+
+	fmt.Printf("tableID = %d", tableID)
+	dhallRef.Tables[tableID].Mutex.Lock()
 	dhallRef.Tables[tableID].IsFree = true;
 	dhallRef.Tables[tableID].HasOrdered = false;
+	dhallRef.Tables[tableID].Mutex.Unlock()
+
+	pendingOrdersCounter--;
+	waitGroup.Done()
 }
