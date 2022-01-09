@@ -1,13 +1,13 @@
 package table
 
-import "dininghall/src/components/types/order"
+import (
+	"dininghall/src/components/types/order"
+	"sync"
+)
 
 type Table struct {
 	IsFree     bool
 	HasOrdered bool
 	Order      order.Order
-}
-
-func NewTable() Table {
-	return Table{true, false, order.Order{}}
+	Mutex 		 *sync.Mutex
 }
