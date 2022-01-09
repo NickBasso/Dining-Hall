@@ -1,5 +1,7 @@
 package order
 
+import "sync"
+
 type Order struct {
 	OrderID    string
 	TableID    int
@@ -8,4 +10,5 @@ type Order struct {
 	Priority   int
 	MaxWait    float64
 	PickUpTime int64
+	Mutex 		 *sync.Mutex
 }
