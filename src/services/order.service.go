@@ -36,14 +36,21 @@ func GenerateOrder(idx int) {
 	isFreeTableAvailable := false
 	isFreeWaiterAvailable := false
 
+	orderID := uuid.NewString()
+	pickUpTime := time.Now().UnixMilli()
+	priority := rand.Intn(constants.PriorityCap) + 1
+	tableID := 0
+	waiterID := 0
+
 	for !isFreeTableAvailable {
 		for i := 0; i < len(dhallRef.Tables); i++ {
 			dhallRef.Tables[i].Mutex.Lock()
 
 			if(dhallRef.Tables[i].IsFree) {
-				dhallRef.Tables[i].IsFree = true
+				dhallRef.Tables[i].IsFree = false
 				isFreeTableAvailable = true
 				dhallRef.Tables[i].Mutex.Unlock()
+				tableID = i
 				break
 			}
 
@@ -67,12 +74,6 @@ func GenerateOrder(idx int) {
 	}
 	maxFloat = float64(maxWait) * 1.3
 
-	orderID := uuid.NewString()
-	pickUpTime := time.Now().UnixMilli()
-	priority := rand.Intn(constants.PriorityCap) + 1
-	tableID := rand.Intn(constants.TablesCount)
-	waiterID := 0
-
 	for !isFreeWaiterAvailable {
 		for i := 0; i < len(dhallRef.Waiters); i++ {
 			dhallRef.Waiters[i].Mutex.Lock()
@@ -81,6 +82,7 @@ func GenerateOrder(idx int) {
 				dhallRef.Waiters[i].IsBusy = true
 				isFreeWaiterAvailable = true
 			  dhallRef.Waiters[i].Mutex.Unlock()
+				waiterID = i
 				break
 			}
 
@@ -88,6 +90,9 @@ func GenerateOrder(idx int) {
 		}	
 
 		time.Sleep(50 * time.Millisecond)
+		dhallRef.Waiters[waiterID].Mutex.Lock()
+		dhallRef.Waiters[waiterID].IsBusy = false
+		dhallRef.Waiters[waiterID].Mutex.Unlock()	
 	}
 
 	order := Order {Items: items, MaxWait: maxFloat, OrderID: orderID, PickUpTime: pickUpTime,
