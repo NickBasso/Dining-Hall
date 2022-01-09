@@ -1,0 +1,5 @@
+// build docker image
+docker build -t dininghall .
+
+// run docker container
+docker run -it -p 4005:4005 dininghall
